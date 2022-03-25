@@ -1,3 +1,10 @@
+client
+server 
+addsub.h
+addsub_clnt.c
+addsub_svc.c
+addsub_xdr.c
+
 # Prerequisites
 *.d
 
@@ -50,3 +57,4 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
