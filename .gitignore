@@ -1,9 +1,9 @@
-client
-server
-contacts.h
-contacts_clnt.c
-contacts_svc.c
-contacts_xdr.c
+src/client
+src/server
+src/agenda.h
+src/agenda_clnt.c
+src/agenda_svc.c
+src/agenda_xdr.c
 
 # Prerequisites
 *.d

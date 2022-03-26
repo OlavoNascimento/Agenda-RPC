@@ -10,7 +10,7 @@ CFLAGS = -fstack-protector-all -std=c99 -O3 -I /usr/include/tirpc -I .
 # Flags de linking
 LDFLAGS = -lnsl -ltirpc
 
-RPCFILE_NAME = contacts
+RPCFILE_NAME = agenda
 RPC_SOURCE = $(RPCFILE_NAME).x
 RPC_OUTPUT = $(RPCFILE_NAME)_xdr.c
 
@@ -23,11 +23,11 @@ debug: $(SERVER) $(CLIENT)
 
 $(SERVER): $(RPC_OUTPUT)
 	@echo "Criando executável $(SERVER)..."
-	$(CC) $(CFLAGS) -o $@ server.c lista.c $(RPCFILE_NAME)_svc.c $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ contato.c server.c lista.c $(RPCFILE_NAME)_svc.c $^ $(LDFLAGS)
 
 $(CLIENT): $(RPC_OUTPUT)
 	@echo "Criando executável $(CLIENT)..."
-	$(CC) $(CFLAGS) -o $@ client.c $(RPCFILE_NAME)_clnt.c $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ contato.c client.c $(RPCFILE_NAME)_clnt.c $^ $(LDFLAGS)
 
 $(RPC_OUTPUT): $(RPC_SOURCE)
 	rpcgen -C $^
