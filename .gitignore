@@ -1,9 +1,9 @@
 client
-server 
-addsub.h
-addsub_clnt.c
-addsub_svc.c
-addsub_xdr.c
+server
+contacts.h
+contacts_clnt.c
+contacts_svc.c
+contacts_xdr.c
 
 # Prerequisites
 *.d
