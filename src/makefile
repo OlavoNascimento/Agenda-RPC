@@ -1,6 +1,7 @@
 # Verifica se uma flag de linking está disponível.
 define check_ld_flag
   $(shell $(LD) $(1) -e 0 /dev/null 2>/dev/null && echo $(1))
+  @rm -f a.out
 endef
 
 # Nome do executável
@@ -39,5 +40,5 @@ $(RPC_OUTPUT): $(RPC_SOURCE)
 	rpcgen -C $^
 
 clean:
-	rm -f *.o $(RPCFILE_NAME).h $(RPCFILE_NAME)_svc.c $(RPCFILE_NAME)_xdr.c $(RPCFILE_NAME)_clnt.c $(CLIENT) $(SERVER) vgcore.*
+	rm -f *.o a.out $(RPCFILE_NAME).h $(RPCFILE_NAME)_svc.c $(RPCFILE_NAME)_xdr.c $(RPCFILE_NAME)_clnt.c $(CLIENT) $(SERVER) vgcore.*
 
