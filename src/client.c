@@ -29,10 +29,9 @@ void add(CLIENT *clnt) {
     result = add_1(contato, clnt);
     if (result == NULL) {
         LOG_ERRO("Problemas na comunicação para adicionar novo contato\n");
-        contato_destruir(contato);
-        return;
+    } else {
+        printf("Contato %s adicionado com sucesso!\n", nome);
     }
-    printf("Contato %s adicionado com sucesso!\n", nome);
     contato_destruir(contato);
 }
 
@@ -47,18 +46,14 @@ void search(CLIENT *clnt) {
     Contato *resultado = search_1(&nome, clnt);
     if (resultado == NULL) {
         LOG_ERRO("Problemas na comunicação para procurar um contato\n");
-        free(nome);
-        return;
-    }
-    if (strcmp(resultado->nome, "") == 0) {
+    } else if (strcmp(resultado->nome, "") == 0) {
         LOG_ERRO("Não foi possível encontrar o contato %s na lista de contatos!\n", nome);
-        free(nome);
-        return;
+    } else {
+        printf("Informações do contato:\n");
+        printf("\tNome: %s\n", resultado->nome);
+        printf("\tEndereço: %s\n", resultado->endereco);
+        printf("\tTelefone: %s\n", resultado->telefone);
     }
-    printf("Informações do contato:\n");
-    printf("\tNome: %s\n", resultado->nome);
-    printf("\tEndereço: %s\n", resultado->endereco);
-    printf("\tTelefone: %s\n", resultado->telefone);
     free(nome);
 }
 
@@ -105,6 +100,11 @@ void update(CLIENT *clnt) {
         contato_destruir(novo);
         return;
     }
+    if (strcmp(resultado->nome, "") == 0) {
+        LOG_ERRO("Não foi possível encontrar o contato %s na lista de contatos!\n", nome_busca);
+        free(nome_busca);
+        return;
+    }
 
     printf("\tContato modificado para:\n");
     printf("\tNome: %s\n", novo->nome);
@@ -124,6 +124,12 @@ void delete (CLIENT *clnt) {
     Contato *resultado = delete_1(&nome, clnt);
     if (resultado == NULL) {
         LOG_ERRO("Problemas na comunicação para remover um contato\n");
+        free(nome);
+        return;
+    }
+    if (strcmp(resultado->nome, "") == 0) {
+        LOG_ERRO("Não foi possível encontrar o contato %s na lista de contatos!\n", nome);
+        free(nome);
         return;
     }
     printf("Deletando o contato:\n");
@@ -131,7 +137,7 @@ void delete (CLIENT *clnt) {
     printf("\tEndereço: %s\n", resultado->endereco);
     printf("\tTelefone: %s\n", resultado->telefone);
 
-    // free(nome);
+    free(nome);
     contato_destruir(resultado);
 }
 

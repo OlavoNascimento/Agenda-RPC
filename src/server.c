@@ -83,7 +83,7 @@ Contato *delete_1_svc(char **nome, struct svc_req *rqstp) {
 
     if (!no) {
         LOG_INFO("%s não foi encontrado na lista de contatos para ser deletado\n", *nome);
-        return NULL;
+        return contato_criar("", "", "");
     }
 
     Contato *busca_delete = lista_remover(contatos, no);
