@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "logging.h"
 #include "contato.h"
+#include "logging.h"
 
 struct ListaNo_s {
     ListaInfo info;
@@ -174,22 +174,10 @@ ListaNo lista_buscar(Lista lista, const char *id) {
     return NULL;
 }
 
-ListaNo lista_buscar_e_modificar(Lista lista, const char *id, ListaInfo info) {
-    if (lista->obter_identificador_info == NULL) {
-        LOG_ERRO(
-            "Não é possível buscar em uma lista que não possui a função obter_identificador_info "
-            "definida!\n");
-        return NULL;
-    }
-
-    for_each_lista(no, lista) {
-        const char *id_atual = lista->obter_identificador_info(no->info);
-        if (strcmp(id_atual, id) == 0)
-            contato_destruir(no->info);
-            no->info = info;
-            return no;
-    }
-    return NULL;
+ListaInfo lista_definir_info(ListaNo no, ListaInfo novaInfo) {
+    ListaInfo info = lista_obter_info(no);
+    no->info = novaInfo;
+    return info;
 }
 
 // Troca as informações armazenadas em dois nós.

@@ -23,13 +23,14 @@ void add(CLIENT *clnt) {
 
     int *result;
     LOG_INFO("Realizei chamada: add %s %s %s\n", nome, endereco, telefone);
-    Contato *contato = contato_criar(nome, nome, endereco, telefone);
+    Contato *contato = contato_criar(nome, endereco, telefone);
 
     /* chama a função remota */
     result = add_1(contato, clnt);
     if (result == NULL) {
         LOG_ERRO("Problemas na comunicação para adicionar novo contato\n");
-        exit(1);
+        contato_destruir(contato);
+        return;
     }
     printf("Contato %s adicionado com sucesso!\n", nome);
     contato_destruir(contato);
@@ -46,11 +47,13 @@ void search(CLIENT *clnt) {
     Contato *resultado = search_1(&nome, clnt);
     if (resultado == NULL) {
         LOG_ERRO("Problemas na comunicação para procurar um contato\n");
-        exit(1);
+        free(nome);
+        return;
     }
     if (strcmp(resultado->nome, "") == 0) {
         LOG_ERRO("Não foi possível encontrar o contato %s na lista de contatos!\n", nome);
-        exit(1);
+        free(nome);
+        return;
     }
     printf("Informações do contato:\n");
     printf("\tNome: %s\n", resultado->nome);
@@ -59,7 +62,7 @@ void search(CLIENT *clnt) {
     free(nome);
 }
 
-void update(CLIENT *clnt){
+void update(CLIENT *clnt) {
     char *nome_busca = calloc(sizeof *nome_busca, 50);
 
     char nome[50] = {'\0'};
@@ -68,7 +71,18 @@ void update(CLIENT *clnt){
 
     printf("Nome do contato para modificar: ");
     scanf("%s", nome_busca);
+
     Contato *resultado = search_1(&nome_busca, clnt);
+    if (resultado == NULL) {
+        LOG_ERRO("Problemas na comunicação para procurar um contato\n");
+        free(nome_busca);
+        return;
+    }
+    if (strcmp(resultado->nome, "") == 0) {
+        LOG_ERRO("Não foi possível encontrar o contato %s na lista de contatos!\n", nome_busca);
+        free(nome_busca);
+        return;
+    }
 
     printf("Novo nome: ");
     scanf("%s", nome);
@@ -77,17 +91,27 @@ void update(CLIENT *clnt){
     printf("Novo telefone: ");
     scanf("%s", telefone);
 
-    contato_modificar(resultado, nome, endereco, telefone);
-    LOG_INFO("Realizei chamada: update %s\n", nome_busca);
-    /* chama a função remota */
+    Contato *novo = contato_criar(nome, endereco, telefone);
+    ContatoUpdate contato_atualizado;
+    contato_atualizado.nome = nome_busca;
+    contato_atualizado.novo = novo;
 
-    update_1(resultado, clnt);
+    /* chama a função remota */
+    LOG_INFO("Realizei chamada: update %s\n", nome_busca);
+    Contato *status = update_1(&contato_atualizado, clnt);
+    if (status == NULL) {
+        LOG_ERRO("Problemas na comunicação para atualizar um contato\n");
+        free(nome_busca);
+        contato_destruir(novo);
+        return;
+    }
 
     printf("\tContato modificado para:\n");
-    printf("\tNome: %s\n", resultado->nome);
-    printf("\tEndereço: %s\n", resultado->endereco);
-    printf("\tTelefone: %s\n", resultado->telefone);
+    printf("\tNome: %s\n", novo->nome);
+    printf("\tEndereço: %s\n", novo->endereco);
+    printf("\tTelefone: %s\n", novo->telefone);
     free(nome_busca);
+    contato_destruir(novo);
 }
 
 void delete (CLIENT *clnt) {
@@ -98,6 +122,10 @@ void delete (CLIENT *clnt) {
     LOG_INFO("Realizei chamada: delete %s\n", nome);
     /* chama a função remota */
     Contato *resultado = delete_1(&nome, clnt);
+    if (resultado == NULL) {
+        LOG_ERRO("Problemas na comunicação para remover um contato\n");
+        return;
+    }
     printf("Deletando o contato:\n");
     printf("\tNome: %s\n", resultado->nome);
     printf("\tEndereço: %s\n", resultado->endereco);
@@ -105,7 +133,6 @@ void delete (CLIENT *clnt) {
 
     // free(nome);
     contato_destruir(resultado);
-
 }
 
 int main(int argc, char *argv[]) {
@@ -148,7 +175,7 @@ int main(int argc, char *argv[]) {
                 break;
             case 4:
                 // TODO
-                delete(clnt);
+                delete (clnt);
                 break;
             case 5:
                 loop = 0;
