@@ -1,3 +1,8 @@
+# Verifica se uma flag de linking está disponível.
+define check_ld_flag
+  $(shell $(LD) $(1) -e 0 /dev/null 2>/dev/null && echo $(1))
+endef
+
 # Nome do executável
 SERVER = server
 CLIENT = client
@@ -8,7 +13,8 @@ CC = gcc
 # Flags de compilação
 CFLAGS = -fstack-protector-all -std=c99 -O3 -I /usr/include/tirpc -I .
 # Flags de linking
-LDFLAGS = -lnsl -ltirpc
+LDFLAGS = -lnsl
+LDFLAGS += $(call check_ld_flag,-ltirpc)
 
 RPCFILE_NAME = agenda
 RPC_SOURCE = $(RPCFILE_NAME).x
