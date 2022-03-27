@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "logging.h"
+#include "contato.h"
 
 struct ListaNo_s {
     ListaInfo info;
@@ -168,6 +169,24 @@ ListaNo lista_buscar(Lista lista, const char *id) {
     for_each_lista(no, lista) {
         const char *id_atual = lista->obter_identificador_info(no->info);
         if (strcmp(id_atual, id) == 0)
+            return no;
+    }
+    return NULL;
+}
+
+ListaNo lista_buscar_e_modificar(Lista lista, const char *id, ListaInfo info) {
+    if (lista->obter_identificador_info == NULL) {
+        LOG_ERRO(
+            "Não é possível buscar em uma lista que não possui a função obter_identificador_info "
+            "definida!\n");
+        return NULL;
+    }
+
+    for_each_lista(no, lista) {
+        const char *id_atual = lista->obter_identificador_info(no->info);
+        if (strcmp(id_atual, id) == 0)
+            contato_destruir(no->info);
+            no->info = info;
             return no;
     }
     return NULL;

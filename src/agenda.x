@@ -6,6 +6,7 @@
 /* Tipo de dado que será passado aos procedimentos remotos */
 struct Contato {
     string nome<50>;
+    string nome_antigo<50>;
     string endereco<100>;
     string telefone<20>;
 };
@@ -15,8 +16,8 @@ program AGENDA_PROG {
     version AGENDA_VERSION {
         int ADD (Contato) = 1;
         Contato SEARCH (string) = 2;
-        int UPDATE (Contato) = 3;
-        int DELETE (char *nome) = 4;
+        Contato UPDATE (Contato) = 3;
+        Contato DELETE (string) = 4;
     }
     = VERSION_NUMBER;
 }

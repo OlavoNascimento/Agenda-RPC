@@ -54,6 +54,12 @@ Retorna o endereço do nó.
 ListaNo lista_buscar(Lista lista, const char *id);
 
 /*
+Acessa um nó da lista e modifica a informação armazenada.
+O id passado deve ser válido. A lista deve ter uma função de busca registrada!.
+Retorna o endereço do nó.
+*/
+ListaNo lista_buscar_e_modificar(Lista lista, const char *id, ListaInfo info);
+/*
 Troca as informações armazenadas em dois nós.
 Ambos os parâmetros não podem ser nulos.
 Os nós tem suas informações trocadas.
